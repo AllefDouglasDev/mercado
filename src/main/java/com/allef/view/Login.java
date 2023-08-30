@@ -24,7 +24,7 @@ public class Login extends JFrame {
     private Input passwordField;
 
     public Login() {
-		setLocationRelativeTo(null);
+        setLocationRelativeTo(null);
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -32,12 +32,12 @@ public class Login extends JFrame {
         mainPanel = new JPanel();
         mainPanel.setBounds(0, 0, WIDTH, HEIGHT);
         mainPanel.setLayout(null);
-        
+
         JLabel title = new JLabel();
         title.setText("ENTRAR");
         title.setBounds(0, 30, 400, 40);
-		title.setHorizontalAlignment(SwingConstants.CENTER);
-		title.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        title.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
         mainPanel.add(title);
 
         usernameField = new Input("Usuário");
@@ -60,36 +60,36 @@ public class Login extends JFrame {
         mainPanel.add(loginBtn);
 
         getContentPane().add(mainPanel);
-        
+
         this.getRootPane().setDefaultButton(loginBtn);
     }
-    
+
     private boolean validateFields() {
-    	boolean hasError = false;
-		usernameField.setError("");
-		passwordField.setError("");
-		String username = usernameField.getValue();
-		String password = passwordField.getValue();
-		if (username.isEmpty()) {
-			usernameField.setError("Informa o usuário.");
-			hasError = true;
-		}
-		if (password.isEmpty()) {
-			passwordField.setError("Informa a senha.");
-			hasError = true;
-		}
-		return !hasError;
+        boolean hasError = false;
+        usernameField.setError("");
+        passwordField.setError("");
+        String username = usernameField.getValue();
+        String password = passwordField.getValue();
+        if (username.isEmpty()) {
+            usernameField.setError("Informa o usuário.");
+            hasError = true;
+        }
+        if (password.isEmpty()) {
+            passwordField.setError("Informa a senha.");
+            hasError = true;
+        }
+        return !hasError;
     }
 
     private ActionListener onSubmit() {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	if (validateFields()) {
-					String username = usernameField.getValue();
-					String password = passwordField.getValue();
-					authenticate(username, password);
-            	}
+            if (validateFields()) {
+                    String username = usernameField.getValue();
+                    String password = passwordField.getValue();
+                    authenticate(username, password);
+                }
             }
         };
     }
@@ -101,9 +101,7 @@ public class Login extends JFrame {
             dispose();
             new Home().setVisible(true);
         } catch (AppException e) {
-        	this.usernameField.setError("Usuário inválido.");
-        	this.passwordField.setError("Usuário inválido.");
-//            JOptionPane.showMessageDialog(this, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE);
         }
     }
 }

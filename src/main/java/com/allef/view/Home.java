@@ -2,11 +2,14 @@ package com.allef.view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.allef.view.components.Button;
+import com.allef.view.product.CreateProduct;
 
 public class Home extends JFrame {
     private final int WIDTH = 1280;
@@ -33,6 +36,12 @@ public class Home extends JFrame {
         Button createProductBtn = new Button();
         createProductBtn.setText("Criar Produto");
         headerPanel.add(createProductBtn);
+        createProductBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new CreateProduct().setVisible(true);
+            }
+        });
     }
     
 }
