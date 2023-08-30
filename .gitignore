@@ -1,0 +1,43 @@
+# Maven target directory
+target/
+
+# Eclipse IDE files
+.classpath
+.project
+.settings/
+
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# NetBeans IDE files
+nbproject/private/
+build/
+
+# Gradle files
+.gradle/
+build/
+
+# Visual Studio Code settings
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Log and report files
+*.log
+*.log.*
+*.txt
+*.swp
+
+# Compiled files
+*.class
+
+# Maven-specific files
+maven-wrapper.jar
+maven-wrapper.properties
+
+# Database
+db/
