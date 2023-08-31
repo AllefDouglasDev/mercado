@@ -22,6 +22,6 @@ public class ProductController {
 
 
     public void save(Product product) {
-        productDAO.save(product);
+        productDAO.create(product);
     }
 }

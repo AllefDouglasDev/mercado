@@ -21,7 +21,7 @@ public class ProductDAO {
     }
 
     public Product get(int id) {
-        String query = "SELECT * FROM products WHERE id = ?";
+        String query = "SELECT * FROM products WHERE id = ? AND is_deleted = 0";
         try (PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -45,26 +45,23 @@ public class ProductDAO {
     }
 
     public Pagination<Product> list(ListProductsDTO dto) {
+        int total = 0;
+        List<Product> products = new ArrayList<>();
         int offset = (dto.getPage() - 1) * dto.getSize();
         String baseQuery = "SELECT * FROM products ";
         String countBaseQuery = "SELECT COUNT(*) FROM products ";
         StringBuilder whereClause = new StringBuilder();
         List<Object> parameters = new ArrayList<>();
-
         if (dto.getSearch() != null && !dto.getSearch().isEmpty()) {
             whereClause.append(
-                    "WHERE LOWER(REMOVE_DIACRITICS(name)) LIKE LOWER(REMOVE_DIACRITICS(?)) "
-                    + " OR LOWER(REMOVE_DIACRITICS(bar_code)) LIKE LOWER(REMOVE_DIACRITICS(?))");
+                    " WHERE LOWER(REMOVE_DIACRITICS(name)) LIKE LOWER(REMOVE_DIACRITICS(?)) "
+                    + " OR LOWER(REMOVE_DIACRITICS(bar_code)) LIKE LOWER(REMOVE_DIACRITICS(?)) ");
             parameters.add("%" + dto.getSearch() + "%");
             parameters.add("%" + dto.getSearch() + "%");
         }
-
-        String query = baseQuery + whereClause.toString() + " LIMIT ? OFFSET ?";
+        whereClause.append(" AND is_deleted = 0 ");
+        String query = baseQuery + whereClause.toString() + " LIMIT ? OFFSET ? ";
         String countQuery = countBaseQuery + whereClause.toString();
-
-        int total = 0;
-        List<Product> products = new ArrayList<>();
-
         try {
             DatabaseConnection.createFunctionToRemoveDiacritics(this.connection);
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
@@ -88,7 +85,6 @@ public class ProductDAO {
                         resultSet.getDate("updated_at")));
             }
             resultSet.close();
-
             PreparedStatement countPreparedStatement = this.connection.prepareStatement(countQuery);
             for (int i = 0; i < parameters.size(); i++) {
                 countPreparedStatement.setObject(i + 1, parameters.get(i));
@@ -97,24 +93,9 @@ public class ProductDAO {
             if (countResultSet.next()) {
                 total = countResultSet.getInt(1);
             }
-            // Get the total count by reusing the same prepared statement
-            // if (parameters.size() > 0) {
-            // preparedStatement.clearParameters();
-            // preparedStatement.setObject(1, parameters.get(0));
-            // preparedStatement.setObject(2, parameters.get(1));
-            // }
-
-            // try (ResultSet countResultSet = preparedStatement.executeQuery()) {
-            // if (countResultSet.next()) {
-            // total = countResultSet.getInt(1);
-            // }
-            // }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        // int total = 1;
-        // List<Product> products = new ArrayList<>();
         return new Pagination<>(
                 dto.getPage(),
                 dto.getSize(),
@@ -122,7 +103,7 @@ public class ProductDAO {
                 products);
     }
 
-    public void save(Product product) {
+    public void create(Product product) {
         String query = "INSERT INTO products (name, amount, bar_code, entry_value, profit_margin, selling_value, is_deleted, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
             Date currentDate = new Date(new java.util.Date().getTime());
