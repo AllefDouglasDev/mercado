@@ -5,15 +5,19 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.allef.database.DatabaseConnection;
+import com.allef.model.Pagination;
 import com.allef.model.Product;
+import com.allef.model.dto.ListProductsDTO;
 
 public class ProductDAO {
-    private Connection connection; 
+    private Connection connection;
 
     public ProductDAO() {
-        this.connection = DatabaseConnection.getConnection();        
+        this.connection = DatabaseConnection.getConnection();
     }
 
     public Product get(int id) {
@@ -32,13 +36,90 @@ public class ProductDAO {
                         resultSet.getInt("selling_value"),
                         resultSet.getInt("is_deleted"),
                         resultSet.getDate("created_at"),
-                        resultSet.getDate("updated_at")
-                );
+                        resultSet.getDate("updated_at"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Pagination<Product> list(ListProductsDTO dto) {
+        int offset = (dto.getPage() - 1) * dto.getSize();
+        String baseQuery = "SELECT * FROM products ";
+        String countBaseQuery = "SELECT COUNT(*) FROM products ";
+        StringBuilder whereClause = new StringBuilder();
+        List<Object> parameters = new ArrayList<>();
+
+        if (dto.getSearch() != null && !dto.getSearch().isEmpty()) {
+            whereClause.append(
+                    "WHERE LOWER(REMOVE_DIACRITICS(name)) LIKE LOWER(REMOVE_DIACRITICS(?)) "
+                    + " OR LOWER(REMOVE_DIACRITICS(bar_code)) LIKE LOWER(REMOVE_DIACRITICS(?))");
+            parameters.add("%" + dto.getSearch() + "%");
+            parameters.add("%" + dto.getSearch() + "%");
+        }
+
+        String query = baseQuery + whereClause.toString() + " LIMIT ? OFFSET ?";
+        String countQuery = countBaseQuery + whereClause.toString();
+
+        int total = 0;
+        List<Product> products = new ArrayList<>();
+
+        try {
+            DatabaseConnection.createFunctionToRemoveDiacritics(this.connection);
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+            for (int i = 0; i < parameters.size(); i++) {
+                preparedStatement.setObject(i + 1, parameters.get(i));
+            }
+            preparedStatement.setInt(parameters.size() + 1, dto.getSize());
+            preparedStatement.setInt(parameters.size() + 2, offset);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                products.add(new Product(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getInt("amount"),
+                        resultSet.getString("bar_code"),
+                        resultSet.getInt("entry_value"),
+                        resultSet.getInt("profit_margin"),
+                        resultSet.getInt("selling_value"),
+                        resultSet.getInt("is_deleted"),
+                        resultSet.getDate("created_at"),
+                        resultSet.getDate("updated_at")));
+            }
+            resultSet.close();
+
+            PreparedStatement countPreparedStatement = this.connection.prepareStatement(countQuery);
+            for (int i = 0; i < parameters.size(); i++) {
+                countPreparedStatement.setObject(i + 1, parameters.get(i));
+            }
+            ResultSet countResultSet = countPreparedStatement.executeQuery();
+            if (countResultSet.next()) {
+                total = countResultSet.getInt(1);
+            }
+            // Get the total count by reusing the same prepared statement
+            // if (parameters.size() > 0) {
+            // preparedStatement.clearParameters();
+            // preparedStatement.setObject(1, parameters.get(0));
+            // preparedStatement.setObject(2, parameters.get(1));
+            // }
+
+            // try (ResultSet countResultSet = preparedStatement.executeQuery()) {
+            // if (countResultSet.next()) {
+            // total = countResultSet.getInt(1);
+            // }
+            // }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // int total = 1;
+        // List<Product> products = new ArrayList<>();
+        return new Pagination<>(
+                dto.getPage(),
+                dto.getSize(),
+                total,
+                products);
     }
 
     public void save(Product product) {

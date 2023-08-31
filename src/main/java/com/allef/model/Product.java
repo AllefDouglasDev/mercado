@@ -127,4 +127,19 @@ public class Product {
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", amount=" + amount +
+                ", barCode='" + barCode + '\'' +
+                ", entryValue=" + entryValue +
+                ", profitMargin=" + profitMargin +
+                ", sellingValue=" + sellingValue +
+                ", isDeleted=" + isDeleted +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

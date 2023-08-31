@@ -7,9 +7,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.sqlite.Function;
 
 public class DatabaseConnection {
     private static final String DB_FOLDER = "db";
@@ -48,23 +51,42 @@ public class DatabaseConnection {
 
             List<String> seedSQLs = new ArrayList<>();
             for (Map.Entry<String, String[]> entry : seed.getSQLs().entrySet()) {
-            	String tableName = entry.getKey();
-				if (tableExists(tableName)) {
-					for (String sql : entry.getValue()) {
-						seedSQLs.add(sql);
-					}
-				}
+                String tableName = entry.getKey();
+                if (tableExists(tableName)) {
+                    for (String sql : entry.getValue()) {
+                        seedSQLs.add(sql);
+                    }
+                }
             }
 
-            for (String sql: migration.getSQLs()) {
-            	statement.executeUpdate(sql);
+            for (String sql : migration.getSQLs()) {
+                statement.executeUpdate(sql);
             }
-            for (String sql: seedSQLs) {
-            	statement.executeUpdate(sql);
+            for (String sql : seedSQLs) {
+                statement.executeUpdate(sql);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void createFunctionToRemoveDiacritics(Connection connection) throws SQLException {
+        Function.create(connection, "REMOVE_DIACRITICS", new Function() {
+            @Override
+            protected void xFunc() throws SQLException {
+                if (args() != 1) {
+                    throw new SQLException("REMOVE_DIACRITICS function requires exactly 1 argument");
+                }
+                String input = value_text(0);
+                if (input == null) {
+                    result("");
+                    return;
+                }
+                String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+                String removedDiacritics = normalized.replaceAll("\\p{M}", "");
+                result(removedDiacritics);
+            }
+        });
     }
 
     public static boolean tableExists(String tableName) {
@@ -75,7 +97,7 @@ public class DatabaseConnection {
                 return rs.getRow() > 0;
             }
             return false;
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
