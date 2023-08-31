@@ -14,6 +14,15 @@ public class Product {
     private Date createdAt;
     private Date updatedAt;
 
+    public Product(String name, int amount, String barCode, int entryValue, int profitMargin, int sellingValue) {
+        this.name = name;
+        this.amount = amount;
+        this.barCode = barCode;
+        this.entryValue = entryValue;
+        this.profitMargin = profitMargin;
+        this.sellingValue = sellingValue;
+    }
+
     public Product(int id, String name, int amount, String barCode, int entryValue, int profitMargin, int sellingValue, int isDeleted, Date createdAt, Date updatedAt) {
         this.id = id;
         this.name = name;

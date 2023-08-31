@@ -1,5 +1,6 @@
 package com.allef.dao;
 
+import java.sql.Date;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,5 +39,24 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void save(Product product) {
+        String query = "INSERT INTO products (name, amount, bar_code, entry_value, profit_margin, selling_value, is_deleted, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
+            Date currentDate = new Date(new java.util.Date().getTime());
+            preparedStatement.setString(1, product.getName());
+            preparedStatement.setInt(2, product.getAmount());
+            preparedStatement.setString(3, product.getBarCode());
+            preparedStatement.setInt(4, product.getEntryValue());
+            preparedStatement.setInt(5, product.getProfitMargin());
+            preparedStatement.setInt(6, product.getSellingValue());
+            preparedStatement.setInt(7, product.getIsDeleted());
+            preparedStatement.setDate(8, currentDate);
+            preparedStatement.setDate(9, currentDate);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

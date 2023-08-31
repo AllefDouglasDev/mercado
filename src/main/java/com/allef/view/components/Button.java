@@ -7,7 +7,7 @@ import javax.swing.JButton;
 import javax.swing.border.MatteBorder;
 
 public class Button extends JButton {
-	private final int WIDTH = 200;
+	private final int WIDTH = 300;
 	private final int HEIGHT = 40;
 
 	public Button() {

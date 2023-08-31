@@ -1,5 +1,9 @@
 package com.allef.view.product;
 
+import javax.swing.JOptionPane;
+
+import com.allef.controller.ProductController;
+import com.allef.model.Product;
 import com.allef.view.components.Input;
 import com.allef.view.components.Modal;
 
@@ -11,6 +15,7 @@ public class CreateProduct {
     private Input barCodeInput;
     private Input priceInput;
     private Input profitMarginInput;
+    private Input sellingValueInput;
 
     public CreateProduct() {
         this.modal = new Modal("Criar Produto");
@@ -35,14 +40,19 @@ public class CreateProduct {
         barCodeInput.setLocation(padding, amountInput.getYEnd());
         modal.add(barCodeInput.getContainer());
 
-        priceInput = new Input("Preço");
+        priceInput = new Input("Custo");
         priceInput.setLocation(barCodeInput.getXEnd() + padding, barCodeInput.getY());
         modal.add(priceInput.getContainer());
 
         profitMarginInput = new Input("Margem de Lucro");
-        profitMarginInput.setWidth(modal.getMainPanel().getWidth() - (padding * 2));
         profitMarginInput.setLocation(padding, priceInput.getYEnd());
         modal.add(profitMarginInput.getContainer());
+
+        sellingValueInput = new Input("Valor de Venda");
+        sellingValueInput.setLocation(
+            profitMarginInput.getXEnd() + padding,
+            profitMarginInput.getY());
+        modal.add(sellingValueInput.getContainer());
     }
 
     public void setVisible(boolean visible) {
@@ -50,19 +60,24 @@ public class CreateProduct {
     }
 
     private void submit() {
-        if (!validateFields()) return;
+        if (!validateFields())
+            return;
         try {
             String name = nameInput.getValue();
             int amount = amountInput.getIntValue();
             String barCode = barCodeInput.getValue();
             int price = priceInput.getIntValue();
             int profitMargin = profitMarginInput.getIntValue();
+            int sellingValue = sellingValueInput.getIntValue();
 
-            System.out.println("name: " + name + ", amount: " + amount + ", barCode: " + barCode + ", price: " + price
-                    + ", profitMargin: " + profitMargin);
+            ProductController productController = new ProductController();
+            Product product = new Product(name, amount, barCode, price, profitMargin, sellingValue);
+            productController.save(product);
 
             modal.dispose();
         } catch (Exception e) {
+            JOptionPane.showMessageDialog(this.modal.getDialog(), e.getMessage(), "Erro ao cadastrar.",
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -74,12 +89,14 @@ public class CreateProduct {
         barCodeInput.removeError();
         priceInput.removeError();
         profitMarginInput.removeError();
+        sellingValueInput.removeError();
 
         String name = nameInput.getValue();
         int amount = amountInput.getIntValue();
         String barCode = barCodeInput.getValue();
         int price = priceInput.getIntValue();
         int profitMargin = profitMarginInput.getIntValue();
+        int sellingValue = sellingValueInput.getIntValue();
 
         if (name.isBlank()) {
             nameInput.setError("Informe o nome.");
@@ -99,6 +116,10 @@ public class CreateProduct {
         }
         if (profitMargin < 0) {
             profitMarginInput.setError("Informe a margem de lucro.");
+            ok = false;
+        }
+        if (sellingValue < 0) {
+            sellingValueInput.setError("Informe o valor de venda.");
             ok = false;
         }
 

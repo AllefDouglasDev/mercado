@@ -7,7 +7,7 @@ import com.allef.view.product.CreateProduct;
 public class Main {
     public static void main(String[] args) {
         DatabaseConnection.initializeDatabase();
-        // new Login().setVisible(true);
-        new CreateProduct().setVisible(true);
+        new Login().setVisible(true);
+        // new CreateProduct().setVisible(true);
     }
 }

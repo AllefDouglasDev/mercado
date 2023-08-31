@@ -13,4 +13,8 @@ public class ProductController {
     public Product get(int id) {
         return productDAO.get(id);
     }
+
+    public void save(Product product) {
+        productDAO.save(product);
+    }
 }

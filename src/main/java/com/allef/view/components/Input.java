@@ -32,6 +32,8 @@ public class Input {
         this.container.setBackground(Colors.BACKGROUND.getColor());
         this.container.setLayout(null);
 
+        animation = new Animation();
+
         this.label = new JLabel(labelText);
         this.label.setForeground(Color.DARK_GRAY);
         this.label.setBounds(0, 20, WIDTH, 16);
@@ -44,11 +46,12 @@ public class Input {
         this.container.add(this.error);
         this.hasError = false;
 
-        this.setToText();
+        this.toText();
+    }
 
-        animation = new Animation();
+    public FocusListener onFocus() {
         int animationTime = 100;
-        this.getField().addFocusListener(new FocusListener() {
+        return new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 animation.smoothMove(label, label.getX(), label.getY(), 0, 0, animationTime);
@@ -69,19 +72,20 @@ public class Input {
                     getField().setBorder(getDefaultBorder());
                 }
             }
-        });
+        };
     }
 
     public void focus() {
         this.getField().grabFocus();
     }
 
-    public void setToText() {
+    public void toText() {
         this.field = new JTextField();
         this.field.setBounds(0, 20, WIDTH, 30);
         this.field.setText(this.getValue());
         this.field.setBorder(this.getDefaultBorder());
         this.field.setBackground(Colors.BACKGROUND.getColor());
+        this.field.addFocusListener(onFocus());
         this.container.add(this.field, 1);
 
         this.isSecure = false;
@@ -91,12 +95,13 @@ public class Input {
         }
     }
 
-    public void setToPassword() {
+    public void toPassword() {
         this.passwordField = new JPasswordField();
         this.passwordField.setBounds(0, 20, WIDTH, 30);
         this.passwordField.setText(this.getValue());
         this.passwordField.setBorder(this.getDefaultBorder());
-        this.field.setBackground(Colors.BACKGROUND.getColor());
+        this.passwordField.setBackground(Colors.BACKGROUND.getColor());
+        this.passwordField.addFocusListener(onFocus());
         this.container.add(this.passwordField, 1);
 
         this.isSecure = true;

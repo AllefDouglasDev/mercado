@@ -13,6 +13,7 @@ import javax.swing.SwingConstants;
 import com.allef.controller.AuthController;
 import com.allef.exception.AppException;
 import com.allef.view.components.Button;
+import com.allef.view.components.Colors;
 import com.allef.view.components.Input;
 
 public class Login extends JFrame {
@@ -32,6 +33,7 @@ public class Login extends JFrame {
         mainPanel = new JPanel();
         mainPanel.setBounds(0, 0, WIDTH, HEIGHT);
         mainPanel.setLayout(null);
+        mainPanel.setBackground(Colors.BACKGROUND.getColor());
 
         JLabel title = new JLabel();
         title.setText("ENTRAR");
@@ -49,13 +51,12 @@ public class Login extends JFrame {
         passwordField = new Input("Senha");
         passwordField.setLocation(50,  usernameField.getYEnd());
         passwordField.setWidth(299);
-        passwordField.setToPassword();
+        passwordField.toPassword();
         mainPanel.add(passwordField.getContainer());
 
         Button loginBtn = new Button();
         loginBtn.setText("Entrar");
-        loginBtn.setLocation(50, passwordField.getYEnd());
-        loginBtn.setWidth(300);
+        loginBtn.setLocation(50, passwordField.getYEnd() + 20);
         loginBtn.addActionListener(onSubmit());
         mainPanel.add(loginBtn);
 
@@ -65,31 +66,28 @@ public class Login extends JFrame {
     }
 
     private boolean validateFields() {
-        boolean hasError = false;
-        usernameField.setError("");
-        passwordField.setError("");
+        boolean ok = true;
+        usernameField.removeError();
+        passwordField.removeError();
         String username = usernameField.getValue();
         String password = passwordField.getValue();
-        if (username.isEmpty()) {
+        if (username.isBlank()) {
             usernameField.setError("Informa o usuário.");
-            hasError = true;
+            ok = false;
         }
-        if (password.isEmpty()) {
+        if (password.isBlank()) {
             passwordField.setError("Informa a senha.");
-            hasError = true;
+            ok = false;
         }
-        return !hasError;
+        return ok;
     }
 
     private ActionListener onSubmit() {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        return e -> {
             if (validateFields()) {
-                    String username = usernameField.getValue();
-                    String password = passwordField.getValue();
-                    authenticate(username, password);
-                }
+                String username = usernameField.getValue();
+                String password = passwordField.getValue();
+                authenticate(username, password);
             }
         };
     }
