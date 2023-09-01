@@ -6,18 +6,15 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import com.allef.view.components.Button;
 import com.allef.view.components.Input;
-import java.awt.GridLayout;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.border.MatteBorder;
 import javax.swing.JPasswordField;
-import java.awt.SystemColor;
 
 public class Playground extends JFrame {
 	private JPanel contentPane;
@@ -64,7 +61,7 @@ public class Playground extends JFrame {
 		defaultButton.setBounds(19, 21, 200, 40);
 		contentPane.add(defaultButton);
 		
-		Input input = new Input("Input field");
+		Input input = new Input("new-field", "Input field");
 		input.setLocation(19, 70);
 		input.setError("Required.");
 		input.removeError();

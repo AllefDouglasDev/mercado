@@ -17,7 +17,8 @@ public class Input {
     public static final int WIDTH = 300;
     public static final int HEIGHT = 70;
 
-    private Animation animation;
+    private String id;
+	private Animation animation;
     private boolean hasError;
     private boolean isSecure;
     private JPanel container;
@@ -26,7 +27,8 @@ public class Input {
     private JTextField field;
     private JPasswordField passwordField;
 
-    public Input(String labelText) {
+    public Input(String id, String labelText) {
+        this.id = id;
         this.container = new JPanel();
         this.container.setSize(WIDTH, HEIGHT);
         this.container.setBackground(Colors.BACKGROUND.getColor());
@@ -202,4 +204,13 @@ public class Input {
     private JTextField getField() {
         return this.isSecure ? this.passwordField : this.field;
     }
+
+    public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 }

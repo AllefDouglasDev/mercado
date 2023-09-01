@@ -38,8 +38,11 @@ public class ProductDAO {
                         resultSet.getDate("created_at"),
                         resultSet.getDate("updated_at"));
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            
         }
         return null;
     }
@@ -93,6 +96,7 @@ public class ProductDAO {
             if (countResultSet.next()) {
                 total = countResultSet.getInt(1);
             }
+            countResultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -41,13 +41,13 @@ public class Login extends JFrame {
         title.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
         mainPanel.add(title);
 
-        usernameField = new Input("Usuário");
+        usernameField = new Input("username", "Usuário");
         usernameField.setLocation(50, 70);
         usernameField.setWidth(300);
         mainPanel.add(usernameField.getContainer());
         usernameField.focus();
 
-        passwordField = new Input("Senha");
+        passwordField = new Input("password", "Senha");
         passwordField.setLocation(50,  usernameField.getYEnd());
         passwordField.setWidth(299);
         passwordField.toPassword();

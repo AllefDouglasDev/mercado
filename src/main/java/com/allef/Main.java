@@ -12,15 +12,7 @@ public class Main {
     public static void main(String[] args) {
         DatabaseConnection.initializeDatabase();
 
-        ProductController productController = new ProductController();
-        ListProductsDTO listProductsDTO = new ListProductsDTO();
-        listProductsDTO.setSize(1);
-        listProductsDTO.setSearch("12");
-        Pagination<Product> products = productController.list(listProductsDTO);
-        System.out.println("Total: " + products.getTotal());
-        products.getData().forEach(System.out::println);
-
-        // new Login().setVisible(true);
+        new Login().setVisible(true);
         // new CreateProduct().setVisible(true);
     }
 }
